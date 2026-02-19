@@ -29,12 +29,12 @@ export async function POST(req: Request) {
 
   const body = await req.json().catch(() => null);
 
-  console.log("BODY RECEIVED:", body); // 👈 AJOUTE ÇA
+  console.log("BODY RECEIVED:", body);
 
   const parsed = createSchema.safeParse(body);
 
   if (!parsed.success) {
-    console.log("ZOD ERROR:", parsed.error.format()); // 👈 AJOUTE ÇA
+    console.log("ZOD ERROR:", parsed.error.format());
 
     return NextResponse.json(
       { error: "Invalid data", details: parsed.error.format() },

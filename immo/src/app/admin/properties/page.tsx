@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 export default function AdminPropertiesPage() {
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingProperty, setEditingProperty] = useState<any | null>(null);
 
   async function fetchProperties() {
     const res = await fetch("/api/properties");
@@ -36,34 +37,92 @@ export default function AdminPropertiesPage() {
   if (surfaceM2Raw !== "") payload.surfaceM2 = surfaceM2Raw;
   if (roomsRaw !== "") payload.rooms = roomsRaw;
 
-  const res = await fetch("/api/properties", {
-    method: "POST",
+  const url = editingProperty
+    ? `/api/properties/${editingProperty.id}`
+    : "/api/properties";
+
+  const method = editingProperty ? "PATCH" : "POST";
+
+  const res = await fetch(url, {
+    method,
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 
   if (res.ok) {
-    form.reset(); // ✅ plus de null
+    setEditingProperty(null);
+    form.reset();
     await fetchProperties();
   } else {
     const data = await res.json().catch(() => ({}));
-    alert(data?.error ?? "Erreur lors de la création");
+    alert(data?.error ?? "Erreur");
   }
-}
+  }
 
   return (
     <div style={{ maxWidth: 900, margin: "40px auto" }}>
       <h1 style={{ fontSize: 28, fontWeight: 700 }}>Biens (Admin)</h1>
 
       {/* Formulaire */}
-      <form onSubmit={handleSubmit} style={{ marginTop: 20, display: "grid", gap: 10 }}>
-        <input name="title" placeholder="Titre" required />
-        <textarea name="description" placeholder="Description" required />
-        <input name="price" type="number" placeholder="Prix" required />
-        <input name="surfaceM2" type="number" placeholder="surfaceM2" required />
-        <input name="rooms" type="number" placeholder="rooms" required />
-        <input name="city" placeholder="Ville" required />
-        <button type="submit">Créer le bien</button>
+      <form
+        key={editingProperty?.id ?? "new"}
+        onSubmit={handleSubmit}
+        style={{ marginTop: 20, display: "grid", gap: 10 }}
+      >
+      <input
+        name="title"
+        placeholder="Titre"
+        defaultValue={editingProperty?.title ?? ""}
+        required
+      />
+
+      <textarea
+        name="description"
+        placeholder="Description"
+        defaultValue={editingProperty?.description ?? ""}
+        required
+      />
+
+      <input
+        name="price"
+        type="number"
+        placeholder="Prix"
+        defaultValue={editingProperty?.price ?? ""}
+        required
+      />
+
+      <input
+        name="surfaceM2"
+        type="number"
+        placeholder="surfaceM2"
+        defaultValue={editingProperty?.surfaceM2 ?? ""}
+      />
+
+      <input
+        name="rooms"
+        type="number"
+        placeholder="rooms"
+        defaultValue={editingProperty?.rooms ?? ""}
+      />
+
+      <input
+        name="city"
+        placeholder="Ville"
+        defaultValue={editingProperty?.city ?? ""}
+        required
+      />
+
+      <button type="submit">
+        {editingProperty ? "Enregistrer les modifications" : "Créer le bien"}
+      </button>
+      {editingProperty && (
+        <button
+          type="button"
+          onClick={() => setEditingProperty(null)}
+        >
+          Annuler
+        </button>
+      )}
       </form>
 
       {/* Liste */}
@@ -77,6 +136,13 @@ export default function AdminPropertiesPage() {
         >
           <div style={{ fontWeight: 700 }}>{p.title}</div>
           <div>{p.city} — {p.price} €</div>
+
+          <button
+            style={{ marginTop: 10, marginRight: 10 }}
+            onClick={() => setEditingProperty(p)}
+          >
+            Modifier
+          </button>
 
           <button
             style={{ marginTop: 10 }}
