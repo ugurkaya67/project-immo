@@ -70,12 +70,36 @@ export default function AdminPropertiesPage() {
       <div style={{ marginTop: 30, display: "grid", gap: 12 }}>
         {loading && <p>Chargement...</p>}
 
-        {properties.map((p) => (
-          <div key={p.id} style={{ padding: 12, border: "1px solid #ddd", borderRadius: 10 }}>
-            <div style={{ fontWeight: 700 }}>{p.title}</div>
-            <div>{p.city} — {p.price} €</div>
-          </div>
-        ))}
+      {properties.map((p) => (
+        <div
+          key={p.id}
+          style={{ padding: 12, border: "1px solid #ddd", borderRadius: 10 }}
+        >
+          <div style={{ fontWeight: 700 }}>{p.title}</div>
+          <div>{p.city} — {p.price} €</div>
+
+          <button
+            style={{ marginTop: 10 }}
+            className="mt-2 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg transition"
+            onClick={async () => {
+              if (!confirm("Supprimer ce bien ?")) return;
+
+              const res = await fetch(`/api/properties/${p.id}`, {
+                method: "DELETE",
+              });
+
+              if (res.ok) {
+                fetchProperties();
+              } else {
+                const data = await res.json().catch(() => ({}));
+                alert(data?.error ?? "Erreur suppression");
+              }
+            }}
+          >
+            Supprimer
+          </button>
+        </div>
+      ))}
 
         {!loading && properties.length === 0 && <p>Aucun bien pour l’instant.</p>}
       </div>
