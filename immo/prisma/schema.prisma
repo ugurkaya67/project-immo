@@ -21,3 +21,16 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
+
+model Property {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  price       Int
+  city        String
+  surfaceM2   Int?
+  rooms       Int?
+  bedrooms    Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
