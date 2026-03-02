@@ -19,8 +19,18 @@ export default async function PropertyDetailPage({
 
   if (!property) return notFound();
 
+
+  const subject = encodeURIComponent(
+    `Demande d'info — ${property.title} (${property.city})`
+  );
+  const body = encodeURIComponent(
+    `Bonjour,\n\nJe suis intéressé(e) par le bien "${property.title}" à ${property.city}.\nPrix: ${property.price.toLocaleString(
+      "fr-FR"
+    )} €\nRéférence: ${property.id}\n\nPouvez-vous me recontacter ?\n\nMerci.`
+  );
+
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
+    <main className="mx-auto max-w-5xl px-4 py-10">
       <Link
         href="/properties"
         className="text-sm text-gray-600 hover:text-gray-900 underline"
@@ -28,37 +38,70 @@ export default async function PropertyDetailPage({
         ← Retour aux biens
       </Link>
 
-      <h1 className="mt-4 text-3xl font-bold">{property.title}</h1>
-      <div className="mt-2 text-gray-600">{property.city}</div>
+      <div className="mt-4 grid gap-6 lg:grid-cols-[1.5fr_1fr]">
+        {/* Colonne gauche */}
+        <section>
+          <h1 className="text-3xl font-bold">{property.title}</h1>
+          <div className="mt-2 text-gray-600">{property.city}</div>
 
-      <div className="mt-6 rounded-xl border border-gray-200 p-5">
-        <div className="text-2xl font-bold">
-          {property.price.toLocaleString("fr-FR")} €
-        </div>
+          <div className="mt-6 rounded-xl border border-gray-200 p-5">
+            <div className="text-2xl font-bold">
+              {property.price.toLocaleString("fr-FR")} €
+            </div>
 
-        <div className="mt-3 flex flex-wrap gap-2 text-sm">
-          {property.surfaceM2 ? (
-            <span className="rounded-full bg-gray-100 px-3 py-1">
-              {property.surfaceM2} m²
-            </span>
-          ) : null}
+            <div className="mt-3 flex flex-wrap gap-2 text-sm">
+              {property.surfaceM2 != null ? (
+                <span className="rounded-full bg-gray-100 px-3 py-1">
+                  {property.surfaceM2} m²
+                </span>
+              ) : null}
 
-          {typeof property.rooms === "number" ? (
-            <span className="rounded-full bg-gray-100 px-3 py-1">
-              {property.rooms} pièces
-            </span>
-          ) : null}
+              {typeof property.rooms === "number" ? (
+                <span className="rounded-full bg-gray-100 px-3 py-1">
+                  {property.rooms} pièces
+                </span>
+              ) : null}
 
-          {typeof property.bedrooms === "number" ? (
-            <span className="rounded-full bg-gray-100 px-3 py-1">
-              {property.bedrooms} chambres
-            </span>
-          ) : null}
-        </div>
+              {typeof property.bedrooms === "number" ? (
+                <span className="rounded-full bg-gray-100 px-3 py-1">
+                  {property.bedrooms} chambres
+                </span>
+              ) : null}
+            </div>
 
-        <div className="mt-5 whitespace-pre-wrap text-gray-800">
-          {property.description}
-        </div>
+            <div className="mt-5 whitespace-pre-wrap text-gray-800">
+              {property.description}
+            </div>
+          </div>
+
+          <div className="mt-3 text-xs text-gray-500">
+            Référence : <span className="font-mono">{property.id}</span>
+          </div>
+        </section>
+
+        {/* Colonne droite (Contact) */}
+        <aside className="h-fit rounded-xl border border-gray-200 p-5">
+          <div className="text-base font-semibold">Contacter l’agence</div>
+          <p className="mt-1 text-sm text-gray-600">
+            Réponse sous 24h (démo).
+          </p>
+
+          <a
+            href={`mailto:ugurkaya67@hotmail.com?subject=${subject}&body=${body}`}
+            className="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-black px-4 py-2 font-semibold text-white hover:bg-gray-900"
+          >
+            Envoyer un email
+          </a>
+
+          <div className="mt-4 text-sm text-gray-700">
+            Ou appelez : <span className="font-semibold">03 88 00 00 00</span>
+          </div>
+
+          <div className="mt-4 rounded-lg bg-gray-50 p-3 text-xs text-gray-600">
+            Astuce : mentionne la référence{" "}
+            <span className="font-mono">{property.id}</span>.
+          </div>
+        </aside>
       </div>
     </main>
   );
