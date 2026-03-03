@@ -2,6 +2,7 @@ import "./globals.css";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import Footer from "@/components/footer";
 
 export default async function RootLayout({
   children,
@@ -46,8 +47,10 @@ export default async function RootLayout({
             </div>
           </nav>
         </header>
-
-        <main>{children}</main>
+        <main className="flex-1">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );

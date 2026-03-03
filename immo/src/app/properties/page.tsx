@@ -7,7 +7,7 @@ export default async function PropertiesPage() {
   });
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-10">
+    <main className="mx-auto max-w-5xl px-4">
       <div className="flex items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Biens immobiliers</h1>
