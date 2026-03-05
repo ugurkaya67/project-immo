@@ -22,7 +22,7 @@ export async function DELETE(
 
 const updateSchema = z.object({
   title: z.string().min(3).optional(),
-  description: z.string().min(10).optional(),
+  description: z.string().min(3).optional(),
   price: z.coerce.number().int().positive().optional(),
   city: z.string().min(2).optional(),
   surfaceM2: z.coerce.number().int().positive().optional(),
@@ -42,13 +42,14 @@ export async function PATCH(
   const { id } = await ctx.params;
 
   const body = await req.json().catch(() => null);
+  //debuging requete envoyé pour mise à jour du biens
+  //console.log("PATCH BODY:", body);
+  
   const parsed = updateSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json(
-      { error: "Invalid data", details: parsed.error.format() },
-      { status: 400 }
-    );
+    console.log("ZOD PATCH ERROR:", parsed.error.format());
+    return NextResponse.json({ error: "Invalid data", details: parsed.error.format() }, { status: 400 });
   }
 
   const data = Object.fromEntries(
