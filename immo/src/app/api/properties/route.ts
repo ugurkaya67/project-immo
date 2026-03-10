@@ -9,9 +9,28 @@ const createSchema = z.object({
   description: z.string().min(3),
   price: z.coerce.number().int().positive(),
   city: z.string().min(2),
+
   surfaceM2: z.coerce.number().int().positive().optional(),
   rooms: z.coerce.number().int().positive().optional(),
   bedrooms: z.coerce.number().int().positive().optional(),
+
+  type: z.enum(["APPARTEMENT","MAISON","TERRAIN","LOCAL_COMMERCIAL","BUREAU"]).optional(),
+  floor: z.coerce.number().int().nonnegative().optional(),
+  totalFloors: z.coerce.number().int().positive().optional(),
+  bathrooms: z.coerce.number().int().nonnegative().optional(),
+  toilets: z.coerce.number().int().nonnegative().optional(),
+
+  heatingType: z.enum(["GAZ","ELECTRIQUE","POMPE_A_CHALEUR","FIOUL","BOIS","COLLECTIF"]).optional(),
+  kitchenType: z.enum(["EQUIPEE","AMENAGEE","AMERICAINE","SEPAREE","AUCUNE"]).optional(),
+  condition: z.enum(["NEUF","EXCELLENT","BON","A_RENOVER"]).optional(),
+  elevator: z.boolean().optional(),
+
+  yearBuilt: z.coerce.number().int().positive().optional(),
+
+  energyClass: z.string().regex(/^[A-G]$/).optional(),
+  gesClass: z.string().regex(/^[A-G]$/).optional(),
+  energyConsumption: z.coerce.number().int().nonnegative().optional(),
+  gesEmission: z.coerce.number().int().nonnegative().optional(),
 });
 
 export async function GET() {

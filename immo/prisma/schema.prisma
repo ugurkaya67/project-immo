@@ -21,16 +21,68 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
-
 model Property {
   id          String   @id @default(cuid())
   title       String
   description String
   price       Int
   city        String
+
   surfaceM2   Int?
   rooms       Int?
   bedrooms    Int?
+
+  type        PropertyType?
+  floor       Int?
+  totalFloors Int?
+  bathrooms   Int?
+  toilets     Int?
+
+  heatingType HeatingType?
+  kitchenType KitchenType?
+  condition   PropertyCondition?
+  elevator    Boolean?
+
+  yearBuilt   Int?
+
+  // DPE / GES
+  energyClass       String? // ex: "A"..."G"
+  gesClass          String? // ex: "A"..."G"
+  energyConsumption Int?    // kWhEP/m²/an
+  gesEmission       Int?    // kgCO2/m²/an
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+enum PropertyType {
+  APPARTEMENT
+  MAISON
+  TERRAIN
+  LOCAL_COMMERCIAL
+  BUREAU
+}
+
+enum HeatingType {
+  GAZ
+  ELECTRIQUE
+  POMPE_A_CHALEUR
+  FIOUL
+  BOIS
+  COLLECTIF
+}
+
+enum KitchenType {
+  EQUIPEE
+  AMENAGEE
+  AMERICAINE
+  SEPAREE
+  AUCUNE
+}
+
+enum PropertyCondition {
+  NEUF
+  EXCELLENT
+  BON
+  A_RENOVER
 }

@@ -29,6 +29,56 @@ export default async function PropertyDetailPage({
     )} €\nRéférence: ${property.id}\n\nPouvez-vous me recontacter ?\n\nMerci.`
   );
 
+  const typeLabel: Record<string, string> = {
+    APPARTEMENT: "Appartement",
+    MAISON: "Maison",
+    TERRAIN: "Terrain",
+    LOCAL_COMMERCIAL: "Local commercial",
+    BUREAU: "Bureau",
+  };
+
+  const heatingLabel: Record<string, string> = {
+    GAZ: "Gaz",
+    ELECTRIQUE: "Électrique",
+    POMPE_A_CHALEUR: "Pompe à chaleur",
+    FIOUL: "Fioul",
+    BOIS: "Bois",
+    COLLECTIF: "Collectif",
+  };
+
+  const kitchenLabel: Record<string, string> = {
+    EQUIPEE: "Équipée",
+    AMENAGEE: "Aménagée",
+    AMERICAINE: "Américaine",
+    SEPAREE: "Séparée",
+    AUCUNE: "Aucune",
+  };
+
+  const conditionLabel: Record<string, string> = {
+    NEUF: "Neuf",
+    EXCELLENT: "Excellent état",
+    BON: "Bon état",
+    A_RENOVER: "À rénover",
+  };
+
+  const hasExtras =
+    property.type != null ||
+    property.floor != null ||
+    property.totalFloors != null ||
+    property.bathrooms != null ||
+    property.toilets != null ||
+    property.heatingType != null ||
+    property.kitchenType != null ||
+    property.condition != null ||
+    property.elevator != null ||
+    property.yearBuilt != null;
+
+  const hasEnergy =
+    property.energyClass != null ||
+    property.gesClass != null ||
+    property.energyConsumption != null ||
+    property.gesEmission != null;
+
   return (
     <main className="mx-auto max-w-5xl px-4 py-10">
       <Link
@@ -72,6 +122,127 @@ export default async function PropertyDetailPage({
             <div className="mt-5 whitespace-pre-wrap text-gray-800">
               {property.description}
             </div>
+            
+            {/* Infos complémentaires */}
+            {hasExtras ? (
+              <div className="mt-6 border-t border-gray-200 pt-5">
+                <h2 className="text-base font-semibold">
+                  Informations complémentaires
+                </h2>
+
+                <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+                  {property.type != null ? (
+                    <div>
+                      <dt className="text-gray-500">Type</dt>
+                      <dd className="font-medium">
+                        {typeLabel[String(property.type)] ?? String(property.type)}
+                      </dd>
+                    </div>
+                  ) : null}
+
+                  {property.condition != null ? (
+                    <div>
+                      <dt className="text-gray-500">État</dt>
+                      <dd className="font-medium">
+                        {conditionLabel[String(property.condition)] ?? String(property.condition)}
+                      </dd>
+                    </div>
+                  ) : null}
+
+                  {property.yearBuilt != null ? (
+                    <div>
+                      <dt className="text-gray-500">Année de construction</dt>
+                      <dd className="font-medium">{property.yearBuilt}</dd>
+                    </div>
+                  ) : null}
+
+                  {property.floor != null ? (
+                    <div>
+                      <dt className="text-gray-500">Étage</dt>
+                      <dd className="font-medium">
+                        {property.floor}
+                        {property.totalFloors != null ? ` / ${property.totalFloors}` : ""}
+                      </dd>
+                    </div>
+                  ) : null}
+
+                  {property.elevator != null ? (
+                    <div>
+                      <dt className="text-gray-500">Ascenseur</dt>
+                      <dd className="font-medium">
+                        {property.elevator ? "Oui" : "Non"}
+                      </dd>
+                    </div>
+                  ) : null}
+
+                  {property.bathrooms != null ? (
+                    <div>
+                      <dt className="text-gray-500">Salles de bain</dt>
+                      <dd className="font-medium">{property.bathrooms}</dd>
+                    </div>
+                  ) : null}
+
+                  {property.toilets != null ? (
+                    <div>
+                      <dt className="text-gray-500">Toilettes</dt>
+                      <dd className="font-medium">{property.toilets}</dd>
+                    </div>
+                  ) : null}
+
+                  {property.heatingType != null ? (
+                    <div>
+                      <dt className="text-gray-500">Chauffage</dt>
+                      <dd className="font-medium">
+                        {heatingLabel[String(property.heatingType)] ?? String(property.heatingType)}
+                      </dd>
+                    </div>
+                  ) : null}
+
+                  {property.kitchenType != null ? (
+                    <div>
+                      <dt className="text-gray-500">Cuisine</dt>
+                      <dd className="font-medium">
+                        {kitchenLabel[String(property.kitchenType)] ?? String(property.kitchenType)}
+                      </dd>
+                    </div>
+                  ) : null}
+                </dl>
+              </div>
+            ) : null}
+
+            {/* DPE / GES */}
+            {hasEnergy ? (
+              <div className="mt-6 border-t border-gray-200 pt-5">
+                <h2 className="text-base font-semibold">DPE / GES</h2>
+
+                <div className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+                  {property.energyClass != null ? (
+                    <div className="rounded-lg bg-gray-50 p-3">
+                      <div className="text-gray-500">Classe énergie</div>
+                      <div className="text-lg font-bold">{property.energyClass}</div>
+                      {property.energyConsumption != null ? (
+                        <div className="mt-1 text-gray-700">
+                          {property.energyConsumption} kWhEP/m²/an
+                        </div>
+                      ) : null}
+                    </div>
+                  ) : null}
+
+                  {property.gesClass != null ? (
+                    <div className="rounded-lg bg-gray-50 p-3">
+                      <div className="text-gray-500">Classe GES</div>
+                      <div className="text-lg font-bold">{property.gesClass}</div>
+                      {property.gesEmission != null ? (
+                        <div className="mt-1 text-gray-700">
+                          {property.gesEmission} kgCO₂/m²/an
+                        </div>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            ) : null}
+
           </div>
 
           <div className="mt-3 text-xs text-gray-500">
