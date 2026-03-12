@@ -3,8 +3,12 @@ import "dotenv/config";
 import argon2 from "argon2";
 
 async function main() {
-  const email = "admin@local.test";
-  const password = "Admin1234!";
+  const email = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
+
+  if (!email || !password) {
+    throw new Error("ADMIN_EMAIL ou ADMIN_PASSWORD manquant.");
+  }
 
   const exists = await prisma.user.findUnique({ where: { email } });
   if (exists) {
