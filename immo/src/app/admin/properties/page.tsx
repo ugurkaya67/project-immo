@@ -6,6 +6,7 @@ export default function AdminPropertiesPage() {
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingProperty, setEditingProperty] = useState<any | null>(null);
+  const [selectedType, setSelectedType] = useState("");
 
   async function fetchProperties() {
     const res = await fetch("/api/properties");
@@ -17,6 +18,14 @@ export default function AdminPropertiesPage() {
   useEffect(() => {
     fetchProperties();
   }, []);
+
+  useEffect(() => {
+    if (editingProperty) {
+      setSelectedType(editingProperty.type ?? "");
+    } else {
+      setSelectedType("");
+    }
+  }, [editingProperty]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
   e.preventDefault();
@@ -41,6 +50,16 @@ export default function AdminPropertiesPage() {
     yearBuilt: fd.get("yearBuilt"),
     condition: fd.get("condition"),
   };
+
+  if (payload.type === "TERRAIN") {
+    delete payload.heatingType;
+    delete payload.kitchenType;
+    delete payload.elevator;
+    delete payload.bathrooms;
+    delete payload.toilets;
+    delete payload.yearBuilt;
+    delete payload.condition;
+  }
 
   if (surfaceM2Raw !== "") payload.surfaceM2 = surfaceM2Raw;
   if (roomsRaw !== "") payload.rooms = roomsRaw;
@@ -84,7 +103,12 @@ export default function AdminPropertiesPage() {
         required
       />
 
-      <select name="type" className="border rounded px-3 py-2">
+      <select
+          name="type"
+          value={selectedType}
+          onChange={(e) => setSelectedType(e.target.value)}
+          className="border rounded px-3 py-2"
+      >
         <option value="">Type</option>
         <option value="APPARTEMENT">Appartement</option>
         <option value="MAISON">Maison</option>
@@ -114,12 +138,14 @@ export default function AdminPropertiesPage() {
         defaultValue={editingProperty?.surfaceM2 ?? ""}
       />
 
+      {selectedType !== "TERRAIN" && (
       <input
         name="rooms"
         type="number"
         placeholder="rooms"
         defaultValue={editingProperty?.rooms ?? ""}
       />
+      )}
 
       <input
         name="city"
@@ -128,57 +154,71 @@ export default function AdminPropertiesPage() {
         required
       />
 
-      <select name="heatingType" className="border rounded px-3 py-2">
-        <option value="">Chauffage</option>
-        <option value="GAZ">Gaz</option>
-        <option value="ELECTRIQUE">Electrique</option>
-        <option value="POMPE_A_CHALEUR">Pompe à chaleur</option>
-        <option value="FIOUL">Fioul</option>
-        <option value="BOIS">Bois</option>
-      </select>
+      {selectedType !== "TERRAIN" && (
+        <select name="heatingType" className="border rounded px-3 py-2">
+          <option value="">Chauffage</option>
+          <option value="GAZ">Gaz</option>
+          <option value="ELECTRIQUE">Electrique</option>
+          <option value="POMPE_A_CHALEUR">Pompe à chaleur</option>
+          <option value="FIOUL">Fioul</option>
+          <option value="BOIS">Bois</option>
+        </select>
+      )}
 
-      <select name="kitchenType" className="border rounded px-3 py-2">
-        <option value="">Cuisine</option>
-        <option value="EQUIPEE">Equipée</option>
-        <option value="AMENAGEE">Aménagée</option>
-        <option value="AMERICAINE">Américaine</option>
-        <option value="SEPAREE">Séparée</option>
-      </select>
+      {selectedType !== "TERRAIN" && (
+        <select name="kitchenType" className="border rounded px-3 py-2">
+          <option value="">Cuisine</option>
+          <option value="EQUIPEE">Equipée</option>
+          <option value="AMENAGEE">Aménagée</option>
+          <option value="AMERICAINE">Américaine</option>
+          <option value="SEPAREE">Séparée</option>
+        </select>
+       )}
 
-      <select name="elevator" className="border rounded px-3 py-2">
-        <option value="">Ascenseur</option>
-        <option value="true">Oui</option>
-        <option value="false">Non</option>
-      </select>
-      
-      <input
-        name="bathrooms"
-        type="number"
-        placeholder="bathrooms"
-        defaultValue={editingProperty?.bathrooms ?? ""}
-      />
+      {selectedType !== "TERRAIN" && (
+        <select name="elevator" className="border rounded px-3 py-2">
+          <option value="">Ascenseur</option>
+          <option value="true">Oui</option>
+          <option value="false">Non</option>
+        </select>
+      )}
 
-      <input
-        name="toilets"
-        type="number"
-        placeholder="toilets"
-        defaultValue={editingProperty?.toilets ?? ""}
-      />
+      {selectedType !== "TERRAIN" && (
+        <input
+          name="bathrooms"
+          type="number"
+          placeholder="bathrooms"
+          defaultValue={editingProperty?.bathrooms ?? ""}
+        />
+      )}
 
-      <input
-        name="yearBuilt"
-        type="number"
-        placeholder="yearBuilt"
-        defaultValue={editingProperty?.yearBuilt ?? ""}
-      />
+      {selectedType !== "TERRAIN" && (
+        <input
+          name="toilets"
+          type="number"
+          placeholder="toilets"
+          defaultValue={editingProperty?.toilets ?? ""}
+        />
+      )}
 
-      <select name="condition" defaultValue={editingProperty?.condition ?? ""}>
-        <option value="">État</option>
-        <option value="NEUF">Neuf</option>
-        <option value="EXCELLENT">Excellent</option>
-        <option value="BON">Bon</option>
-        <option value="A_RENOVER">À rénover</option>
-      </select>
+      {selectedType !== "TERRAIN" && (
+        <input
+          name="yearBuilt"
+          type="number"
+          placeholder="yearBuilt"
+          defaultValue={editingProperty?.yearBuilt ?? ""}
+        />
+      )}
+
+      {selectedType !== "TERRAIN" && (
+        <select name="condition" defaultValue={editingProperty?.condition ?? ""}>
+          <option value="">État</option>
+          <option value="NEUF">Neuf</option>
+          <option value="EXCELLENT">Excellent</option>
+          <option value="BON">Bon</option>
+          <option value="A_RENOVER">À rénover</option>
+        </select>
+      )}
 
       <button type="submit">
         {editingProperty ? "Enregistrer les modifications" : "Créer le bien"}
