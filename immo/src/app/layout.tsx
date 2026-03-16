@@ -14,7 +14,7 @@ export default async function RootLayout({
 
   return (
     <html lang="fr">
-      <body>
+      <body className="min-h-screen flex flex-col">
         <header className="border-b border-gray-200">
           <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
             <Link href="/" className="text-xl font-bold">
