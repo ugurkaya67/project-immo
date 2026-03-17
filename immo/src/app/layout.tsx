@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Footer from "@/components/footer";
+import LogoutButton from "@/components/LogoutButton";
 
 export default async function RootLayout({
   children,
@@ -36,9 +37,7 @@ export default async function RootLayout({
               )}
 
               {session ? (
-                <Link href="/api/auth/signout" className="hover:underline">
-                  Déconnexion
-                </Link>
+                <LogoutButton />
               ) : (
                 <Link href="/login" className="hover:underline">
                   Connexion

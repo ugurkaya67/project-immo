@@ -8,7 +8,8 @@
     "vercel-build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
-    "create-admin": "tsx src/scripts/create-admin.ts"
+    "create-admin": "tsx src/scripts/create-admin.ts",
+    "test:e2e:login": "playwright test login.spec.ts --project=chromium --workers=1"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
@@ -22,6 +23,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
