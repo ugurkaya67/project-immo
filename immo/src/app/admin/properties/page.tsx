@@ -116,7 +116,7 @@ export default function AdminPropertiesPage() {
             ...prev,
             title:
               value.trim().length < 3
-                ? "Le titre doit contenir au moins 3 caractères"
+                ? "Le titre doit contenir au moins 3 caractères."
                 : undefined,
           }));
         }}
@@ -153,7 +153,22 @@ export default function AdminPropertiesPage() {
         placeholder="Prix"
         defaultValue={editingProperty?.price ?? ""}
         required
+        onChange={(e) => {
+          const value = e.target.value;
+          setErrors((prev) => ({
+            ...prev,
+            price:
+              value.trim().length < 5
+                ? "Le prix ne semble pas correct."
+                : undefined,
+          }));
+        }}
       />
+
+      {errors.price && (
+        <p style={{ color: "red", fontSize: 14 }}>{errors.price}</p>
+      )}
+
 
       <input
         name="surfaceM2"
