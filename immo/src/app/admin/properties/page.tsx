@@ -7,6 +7,14 @@ export default function AdminPropertiesPage() {
   const [loading, setLoading] = useState(true);
   const [editingProperty, setEditingProperty] = useState<any | null>(null);
   const [selectedType, setSelectedType] = useState("");
+  type FormErrors = {
+      title?: string;
+      price?: string;
+      description?: string;
+      city?: string;
+  };
+
+  const [errors, setErrors] = useState<FormErrors>({});
 
   async function fetchProperties() {
     const res = await fetch("/api/properties");
@@ -96,12 +104,28 @@ export default function AdminPropertiesPage() {
         onSubmit={handleSubmit}
         style={{ marginTop: 20, display: "grid", gap: 10 }}
       >
+        
       <input
         name="title"
         placeholder="Titre"
         defaultValue={editingProperty?.title ?? ""}
         required
+        onChange={(e) => {
+          const value = e.target.value;
+          setErrors((prev) => ({
+            ...prev,
+            title:
+              value.trim().length < 3
+                ? "Le titre doit contenir au moins 3 caractères"
+                : undefined,
+          }));
+        }}
       />
+
+      {errors.title && (
+        <p style={{ color: "red", fontSize: 14 }}>{errors.title}</p>
+      )}
+
 
       <select
           name="type"
