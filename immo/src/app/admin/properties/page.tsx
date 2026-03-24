@@ -6,6 +6,9 @@ export default function AdminPropertiesPage() {
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingProperty, setEditingProperty] = useState<any | null>(null);
+  const [cityInput, setCityInput] = useState("");
+  const [citySuggestions, setCitySuggestions] = useState<any[]>([]);
+  const [showCitySuggestions, setShowCitySuggestions] = useState(false);
   const [selectedType, setSelectedType] = useState("");
   type FormErrors = {
       title?: string;
@@ -30,10 +33,36 @@ export default function AdminPropertiesPage() {
   useEffect(() => {
     if (editingProperty) {
       setSelectedType(editingProperty.type ?? "");
+      setCityInput(editingProperty.city ?? "");
     } else {
       setSelectedType("");
+      setCityInput("");
     }
   }, [editingProperty]);
+
+  async function fetchCitySuggestions(query: string) {
+    if (query.trim().length < 3) {
+      setCitySuggestions([]);
+      setShowCitySuggestions(false);
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `https://geo.api.gouv.fr/communes?nom=${encodeURIComponent(
+          query
+        )}&boost=population&limit=5&fields=nom,code,codesPostaux,departement`
+      );
+
+      const data = await res.json();
+      setCitySuggestions(data);
+      setShowCitySuggestions(true);
+    } catch (error) {
+      console.error("Erreur autocomplete ville:", error);
+      setCitySuggestions([]);
+      setShowCitySuggestions(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
   e.preventDefault();
@@ -49,7 +78,7 @@ export default function AdminPropertiesPage() {
     type: fd.get("type"),
     description: fd.get("description"),
     price: fd.get("price"),
-    city: fd.get("city"),
+    city: cityInput,
     heatingType: fd.get("heatingType"),
     kitchenType: fd.get("kitchenType"),
     elevator: fd.get("elevator") === "true",
@@ -88,6 +117,9 @@ export default function AdminPropertiesPage() {
     setEditingProperty(null);
     form.reset();
     await fetchProperties();
+    setCityInput("");
+    setCitySuggestions([]);
+    setShowCitySuggestions(false);
   } else {
     const data = await res.json().catch(() => ({}));
     alert(data?.error ?? "Erreur");
@@ -186,12 +218,67 @@ export default function AdminPropertiesPage() {
       />
       )}
 
-      <input
-        name="city"
-        placeholder="Ville"
-        defaultValue={editingProperty?.city ?? ""}
-        required
-      />
+      <div style={{ position: "relative" }}>
+        <input
+          name="city"
+          placeholder="Ville"
+          value={cityInput}
+          onChange={async (e) => {
+            const value = e.target.value;
+            setCityInput(value);
+            await fetchCitySuggestions(value);
+          }}
+          onFocus={() => {
+            if (citySuggestions.length > 0) setShowCitySuggestions(true);
+          }}
+          required
+        />
+
+        {showCitySuggestions && citySuggestions.length > 0 && (
+          <div
+            style={{
+              position: "absolute",
+              top: "100%",
+              left: 0,
+              right: 0,
+              zIndex: 10,
+              background: "white",
+              border: "1px solid #ddd",
+              borderRadius: 8,
+              marginTop: 4,
+              boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+              overflow: "hidden",
+            }}
+          >
+            {citySuggestions.map((city) => (
+              <button
+                key={city.code}
+                type="button"
+                onClick={() => {
+                  setCityInput(city.nom);
+                  setCitySuggestions([]);
+                  setShowCitySuggestions(false);
+                }}
+                style={{
+                  display: "block",
+                  width: "100%",
+                  textAlign: "left",
+                  padding: "10px 12px",
+                  border: "none",
+                  background: "white",
+                  cursor: "pointer",
+                }}
+              >
+                <div style={{ fontWeight: 600 }}>{city.nom}</div>
+                <div style={{ fontSize: 12, color: "#666" }}>
+                  {city.departement?.nom ?? ""}
+                  {city.codesPostaux?.length ? ` — ${city.codesPostaux[0]}` : ""}
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       {selectedType !== "TERRAIN" && (
         <select name="heatingType" className="border rounded px-3 py-2">
