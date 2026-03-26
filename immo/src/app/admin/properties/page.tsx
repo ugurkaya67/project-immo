@@ -177,7 +177,21 @@ export default function AdminPropertiesPage() {
         placeholder="Description"
         defaultValue={editingProperty?.description ?? ""}
         required
+        onChange={(e) => {
+          const value = e.target.value;
+          setErrors((prev) => ({
+            ...prev,
+            description:
+              value.trim().length < 10
+                ? "La description doit contenir au moins 10 caractères"
+                : undefined,
+          }));
+        }}
       />
+
+      {errors.description && (
+        <p style={{ color: "red", fontSize: 14 }}>{errors.description}</p>
+      )}
 
       <input
         name="price"
@@ -205,7 +219,7 @@ export default function AdminPropertiesPage() {
       <input
         name="surfaceM2"
         type="number"
-        placeholder="surfaceM2"
+        placeholder="Surface(M2)"
         defaultValue={editingProperty?.surfaceM2 ?? ""}
       />
 
@@ -213,7 +227,7 @@ export default function AdminPropertiesPage() {
       <input
         name="rooms"
         type="number"
-        placeholder="rooms"
+        placeholder="Nombre de chambres"
         defaultValue={editingProperty?.rooms ?? ""}
       />
       )}
@@ -226,6 +240,15 @@ export default function AdminPropertiesPage() {
           onChange={async (e) => {
             const value = e.target.value;
             setCityInput(value);
+
+            setErrors((prev) => ({
+              ...prev,
+              city:
+                value.trim().length < 2
+                  ? "La ville doit contenir au moins 2 caractères"
+                  : undefined,
+            }));
+
             await fetchCitySuggestions(value);
           }}
           onFocus={() => {
@@ -258,6 +281,11 @@ export default function AdminPropertiesPage() {
                   setCityInput(city.nom);
                   setCitySuggestions([]);
                   setShowCitySuggestions(false);
+
+                  setErrors((prev) => ({
+                    ...prev,
+                    city: undefined,
+                  }));
                 }}
                 style={{
                   display: "block",
@@ -279,6 +307,10 @@ export default function AdminPropertiesPage() {
           </div>
         )}
       </div>
+      {errors.city && (
+        <p style={{ color: "red", fontSize: 14 }}>{errors.city}</p>
+      )}
+      
 
       {selectedType !== "TERRAIN" && (
         <select name="heatingType" className="border rounded px-3 py-2">
@@ -313,7 +345,7 @@ export default function AdminPropertiesPage() {
         <input
           name="bathrooms"
           type="number"
-          placeholder="bathrooms"
+          placeholder="Salle de bains"
           defaultValue={editingProperty?.bathrooms ?? ""}
         />
       )}
@@ -322,7 +354,7 @@ export default function AdminPropertiesPage() {
         <input
           name="toilets"
           type="number"
-          placeholder="toilets"
+          placeholder="Toilettes"
           defaultValue={editingProperty?.toilets ?? ""}
         />
       )}
@@ -331,7 +363,7 @@ export default function AdminPropertiesPage() {
         <input
           name="yearBuilt"
           type="number"
-          placeholder="yearBuilt"
+          placeholder="Année de construction"
           defaultValue={editingProperty?.yearBuilt ?? ""}
         />
       )}
