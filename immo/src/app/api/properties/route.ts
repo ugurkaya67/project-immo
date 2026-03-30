@@ -31,6 +31,8 @@ const createSchema = z.object({
   gesClass: z.string().regex(/^[A-G]$/).optional(),
   energyConsumption: z.coerce.number().int().nonnegative().optional(),
   gesEmission: z.coerce.number().int().nonnegative().optional(),
+
+  imageUrl: z.string().url().optional(),
 });
 
 export async function GET() {

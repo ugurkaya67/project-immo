@@ -15,6 +15,7 @@ export default function AdminPropertiesPage() {
       price?: string;
       description?: string;
       city?: string;
+      imageURL? : string;
   };
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -86,6 +87,7 @@ export default function AdminPropertiesPage() {
     toilets: fd.get("toilets"),
     yearBuilt: fd.get("yearBuilt"),
     condition: fd.get("condition"),
+    imageURL: fd.get("imageURL"),
   };
 
   if (payload.type === "TERRAIN") {
@@ -96,6 +98,7 @@ export default function AdminPropertiesPage() {
     delete payload.toilets;
     delete payload.yearBuilt;
     delete payload.condition;
+    delete payload.imageURL;
   }
 
   if (surfaceM2Raw !== "") payload.surfaceM2 = surfaceM2Raw;
@@ -366,6 +369,27 @@ export default function AdminPropertiesPage() {
           placeholder="Année de construction"
           defaultValue={editingProperty?.yearBuilt ?? ""}
         />
+      )}
+
+      <textarea
+        name="imageURL"
+        placeholder="Adresse URL de l'image"
+        defaultValue={editingProperty?.imageURL ?? ""}
+        required
+        onChange={(e) => {
+          const value = e.target.value;
+          setErrors((prev) => ({
+            ...prev,
+            description:
+              value.trim().length < 3
+                ? "Le liens de l'image doit contenir au moins 3 caractères"
+                : undefined,
+          }));
+        }}
+      />
+
+      {errors.imageURL && (
+        <p style={{ color: "red", fontSize: 14 }}>{errors.description}</p>
       )}
 
       {selectedType !== "TERRAIN" && (

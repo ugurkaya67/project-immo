@@ -43,6 +43,8 @@ model Property {
   condition   PropertyCondition?
   elevator    Boolean?
 
+  imageUrl    String?
+
   yearBuilt   Int?
 
   // DPE / GES
