@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import Filters from "./filters";
+import { getPropertyImage } from "@/lib/property-image";
 
 const typeLabels: Record<string, string> = {
   APPARTEMENT: "Appartement",
@@ -76,6 +77,18 @@ export default async function PropertiesPage({
             href={`/properties/${p.id}`}
             className="rounded-xl border border-gray-200 p-4 transition hover:shadow-sm"
           >
+            <img
+                src={getPropertyImage(p.type, p.imageUrl)}
+                alt={p.title}
+                style={{
+                  width: "100%",
+                  height: 200,
+                  objectFit: "cover",
+                  borderRadius: 12,
+                  marginBottom: 12,
+                }}
+            />
+            
             <div className="text-lg font-semibold line-clamp-2">{p.title}</div>
 
             <div className="mt-2 text-sm text-gray-600">{p.city}</div>

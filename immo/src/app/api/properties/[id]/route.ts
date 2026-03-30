@@ -28,7 +28,7 @@ const updateSchema = z.object({
   surfaceM2: z.coerce.number().int().positive().optional(),
   rooms: z.coerce.number().int().positive().optional(),
   bedrooms: z.coerce.number().int().positive().optional(),
-  imageUrl: z.string().optional(),
+  imageUrl: z.string().url().optional(),
 });
 
 export async function PATCH(

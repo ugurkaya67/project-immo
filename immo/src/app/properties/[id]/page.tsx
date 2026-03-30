@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { getPropertyImage } from "@/lib/property-image";
 
 type Params = { id?: string };
 
@@ -93,6 +94,14 @@ export default async function PropertyDetailPage({
         <section>
           <h1 className="text-3xl font-bold">{property.title}</h1>
           <div className="mt-2 text-gray-600">{property.city}</div>
+
+          <div className="mt-6 overflow-hidden rounded-xl border border-gray-200">
+            <img
+              src={getPropertyImage(property.type, property.imageUrl)}
+              alt={property.title}
+              className="h-[320px] w-full object-cover"
+            />
+          </div>
 
           <div className="mt-6 rounded-xl border border-gray-200 p-5">
             <div className="text-2xl font-bold">

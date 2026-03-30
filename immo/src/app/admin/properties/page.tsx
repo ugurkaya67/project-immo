@@ -371,21 +371,10 @@ export default function AdminPropertiesPage() {
         />
       )}
 
-      <textarea
-        name="imageURL"
-        placeholder="Adresse URL de l'image"
-        defaultValue={editingProperty?.imageURL ?? ""}
-        required
-        onChange={(e) => {
-          const value = e.target.value;
-          setErrors((prev) => ({
-            ...prev,
-            description:
-              value.trim().length < 3
-                ? "Le liens de l'image doit contenir au moins 3 caractères"
-                : undefined,
-          }));
-        }}
+      <input
+        name="imageUrl"
+        placeholder="URL de l'image"
+        defaultValue={editingProperty?.imageUrl ?? ""}
       />
 
       {errors.imageURL && (
